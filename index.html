@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الاختبار التعليمي المتقدم للحفظ</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- شاشة التحميل -->
+    <div id="loader" class="loader hidden">
+        <div class="spinner"></div>
+        <p id="loader-text">جاري التحميل...</p>
+    </div>
+
+    <!-- شاشة البداية وتسجيل الدخول -->
+    <div id="start-screen" class="container">
+        <h1>الاختبار التعليمي المتقدم للحفظ</h1>
+        <div id="login-container">
+            <p>أدخل اسمك للبدء أو بريدك الإلكتروني (للمدير)</p>
+            <input type="text" id="userName" placeholder="الاسم أو البريد الإلكتروني">
+            <input type="password" id="adminPassword" placeholder="كلمة مرور المدير" class="hidden">
+            <button id="loginButton">دخول / متابعة</button>
+        </div>
+        <hr id="player-info-hr" class="hidden">
+        <div id="player-info" class="hidden">
+            <p>المستوى: <strong id="player-level"></strong> (<span id="player-title"></span>) | الألماس: <strong id="player-diamonds"></strong>💎</p>
+            <div id="xp-bar-container"><div id="xp-bar"></div></div>
+            <p id="player-xp"></p>
+        </div>
+        <div id="main-menu" class="hidden">
+            <button id="storeButton">المتجر</button>
+            <button id="challengesButton">التحديات</button>
+            <button id="statsButton">إحصائياتي</button>
+            <button id="leaderboardButton">لوحة الصدارة</button>
+            <button id="achievementsButton">الإنجازات</button>
+            <button id="adminPanelButton" class="hidden">لوحة تحكم المدير</button>
+        </div>
+        <div id="quiz-options" class="hidden">
+            <hr>
+            <p>اختر اختباراً لتبدأ:</p>
+            <select id="pageSelect"><option>اختر صفحة أو نطاقاً</option></select>
+            <button id="startButton">ابدأ الاختبار المحدد</button>
+            <hr>
+            <p>أو اختبر في نطاق مخصص (يجب أن تمتلك كل الصفحات فيه):</p>
+            <div id="custom-range-container">
+                <input type="number" id="rangeStart" placeholder="من صفحة" min="1" max="604">
+                <input type="number" id="rangeEnd" placeholder="إلى صفحة" min="1" max="604">
+            </div>
+            <button id="startCustomRangeButton">ابدأ اختبار النطاق</button>
+            <hr>
+            <p>إعدادات الاختبار:</p>
+            <select id="qariSelect">
+                <option value="ar.alafasy" selected>مشاري العفاسي</option>
+                <option value="ar.abdulbasitmurattal">عبد الباسط (مرتل)</option>
+                <option value="ar.husary">محمود خليل الحصري</option>
+            </select>
+            <select id="questionsCount">
+                <!-- سيتم ملء هذه القائمة ديناميكياً -->
+            </select>
+        </div>
+    </div>
+
+    <!-- شاشة المتجر -->
+    <div id="store-screen" class="container hidden">
+        <div class="store-header">
+            <div>
+                <h2>المتجر</h2>
+                <p>رصيدك: <strong id="store-diamonds"></strong> 💎</p>
+            </div>
+            <div id="store-categories" class="categories-tabs">
+                <button class="category-tab active" data-category="ALL">الكل</button>
+                <button class="category-tab" data-category="PAGE">صفحات</button>
+                <button class="category-tab" data-category="QUESTION_TYPE">أنواع أسئلة</button>
+                <button class="category-tab" data-category="QUIZ_LENGTH">ترقيات</button>
+                <button class="category-tab" data-category="THEME">مظاهر</button>
+            </div>
+        </div>
+        <div id="store-items-container" class="items-grid"></div>
+        <button class="back-button">العودة للقائمة الرئيسية</button>
+    </div>
+
+    <!-- شاشة التحديات -->
+    <div id="challenges-screen" class="container hidden">
+        <h2>التحديات المتاحة</h2>
+        <div id="challenges-container" class="items-grid"></div>
+        <button class="back-button">العودة للقائمة الرئيسية</button>
+    </div>
+
+    <!-- شاشة الإحصائيات -->
+    <div id="stats-screen" class="container hidden">
+        <h2>إحصائيات الأداء</h2>
+        <div id="stats-summary" class="stats-grid">
+            <div class="stat-card">
+                <h4>إجمالي الاختبارات</h4>
+                <p id="stats-total-quizzes">0</p>
+            </div>
+            <div class="stat-card">
+                <h4>متوسط النتيجة</h4>
+                <p id="stats-avg-score">0%</p>
+            </div>
+            <div class="stat-card">
+                <h4>أعلى نتيجة</h4>
+                <p id="stats-high-score">0 / 0</p>
+            </div>
+            <div class="stat-card">
+                <h4>إجمالي XP المكتسبة</h4>
+                <p id="stats-total-xp">0</p>
+            </div>
+        </div>
+        <hr>
+        <h3>سجل الاختبارات</h3>
+        <div id="stats-history-container"></div>
+        <button class="back-button">العودة للقائمة الرئيسية</button>
+    </div>
+
+    <!-- شاشة لوحة الصدارة -->
+    <div id="leaderboard-screen" class="container hidden">
+        <h2>🏆 لوحة الصدارة 🏆</h2>
+        <p>قائمة بأفضل اللاعبين نقاطًا</p>
+        <div id="leaderboard-container"></div>
+        <button class="back-button">العودة للقائمة الرئيسية</button>
+    </div>
+
+    <!-- شاشة الإنجازات -->
+    <div id="achievements-screen" class="container hidden">
+        <h2>الإنجازات</h2>
+        <p>أكمل المهام لتربح مكافآت قيمة!</p>
+        <div id="achievements-container" class="items-grid"></div>
+        <button class="back-button">العودة للقائمة الرئيسية</button>
+    </div>
+
+    <!-- شاشة الاختبار -->
+    <div id="quiz-screen" class="container hidden">
+        <div id="quiz-header">
+            <div id="progress-counter"></div>
+            <div id="display-settings">
+                <div class="font-size-control">
+                    <button id="decrease-font-btn" title="تصغير الخط">A-</button>
+                    <button id="increase-font-btn" title="تكبير الخط">A+</button>
+                </div>
+                <select id="font-type-select" title="تغيير نوع الخط">
+                    <option value="font-amiri">Amiri (الافتراضي)</option>
+                    <option value="font-cairo">Cairo</option>
+                    <option value="font-noto-naskh">Noto Naskh</option>
+                </select>
+            </div>
+        </div>
+        <div id="progress-container"><div id="progress-bar"></div></div>
+        <hr>
+        <div id="question-area"></div>
+        <div id="feedback-area" class="hidden"></div>
+    </div>
+
+    <!-- شاشة النتيجة النهائية -->
+    <div id="result-screen" class="container hidden">
+        <h2>النتيجة النهائية</h2>
+        <p>أحسنت يا <span id="resultName"></span>!</p>
+        <p>نتيجتك هي: <span id="finalScore"></span></p>
+        <div id="level-up-message" class="hidden"></div>
+        <p id="save-message"></p>
+        <button id="reload-button">العودة إلى القائمة الرئيسية</button>
+    </div>
+
+    <!-- شاشة لوحة تحكم المدير -->
+    <div id="admin-panel-screen" class="container hidden">
+        <h2>لوحة تحكم المدير</h2>
+        <!-- ... (محتوى لوحة تحكم المدير يبقى كما هو) ... -->
+        <button class="back-button">العودة للقائمة الرئيسية</button>
+    </div>
+
+    <!-- نافذة تأكيد الشراء (Modal) -->
+    <div id="confirmation-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 id="modal-title">تأكيد عملية الشراء</h3>
+            <p id="modal-text">هل أنت متأكد من رغبتك في الشراء؟</p>
+            <div class="modal-actions">
+                <button id="modal-confirm-btn" class="confirm-button">نعم، تأكيد الشراء</button>
+                <button id="modal-cancel-btn" class="cancel-button">إلغاء</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- حاوية إشعارات الإنجازات -->
+    <div id="achievement-toast" class="achievement-toast hidden">
+        <div id="toast-icon"></div>
+        <div id="toast-text">
+            <h4 id="toast-title"></h4>
+            <p id="toast-description"></p>
+        </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
